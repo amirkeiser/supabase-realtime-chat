@@ -6,20 +6,37 @@
 
 User profile information linked to auth.users.
 
-| Column     | Type      | Nullable |
-| ---------- | --------- | -------- |
-| id         | uuid      | no       |
-| created_at | timestamp | no       |
-| name       | varchar   | no       |
-| image_url  | varchar   | yes      |
-| role       | user_role | no       |
+| Column           | Type                | Nullable | Default      |
+| ---------------- | ------------------- | -------- | ------------ |
+| id               | uuid                | no       |              |
+| created_at       | timestamp           | no       |              |
+| name             | varchar             | no       |              |
+| image_url        | varchar             | yes      |              |
+| role             | user_role           | no       | 'user'       |
+| profile_status   | user_profile_status | no       | 'incomplete' |
+| photo_url        | varchar             | yes      |              |
+| bio              | text                | yes      |              |
+| date_of_birth    | date                | yes      |              |
+| gender           | gender_type         | yes      |              |
+| location         | varchar             | yes      |              |
+| religious_info   | jsonb               | yes      | '{}'         |
+| preferences      | jsonb               | yes      | '{}'         |
+| submitted_at     | timestamp           | yes      |              |
+| reviewed_at      | timestamp           | yes      |              |
+| reviewed_by      | uuid                | yes      |              |
+| rejection_reason | text                | yes      |              |
 
 **Primary Key:** id  
-**Foreign Key:** id → auth.users.id
+**Foreign Keys:**
+
+- id → auth.users.id
+- reviewed_by → user_profile.id
 
 **Enums:**
 
 - `user_role`: 'user', 'admin'
+- `user_profile_status`: 'incomplete', 'pending_review', 'approved', 'rejected'
+- `gender_type`: 'male', 'female', 'other'
 
 ---
 
@@ -85,6 +102,7 @@ Messages sent in chat rooms.
   - Admins can view all profiles
 - **UPDATE**:
   - Users can update their own profile **except** the `role` column
+  - Users can edit profile even after approval (status doesn't restrict updates)
   - Admins can update any profile including roles
 - **INSERT**:
   - Users can only insert their own profile with `role = 'user'`
@@ -126,6 +144,13 @@ Channel pattern: `room:${roomId}:messages`
 **Function:** broadcast_new_message()  
 **Purpose:** Broadcasts new messages to realtime channel `room:${roomId}:messages` with event "INSERT"
 
+### `enforce_role_changes`
+
+**Table:** user_profile  
+**Event:** Before UPDATE  
+**Function:** prevent_role_escalation()  
+**Purpose:** Prevents non-admin users from changing the `role` column (privilege escalation protection)
+
 ---
 
 ## Functions
@@ -153,6 +178,24 @@ Checks if a user profile is complete.
 **Returns:** boolean  
 **Security:** definer  
 Returns true if the current authenticated user has the 'admin' role.
+
+### `prevent_role_escalation()`
+
+**Returns:** trigger  
+**Security:** invoker  
+Blocks updates to the `role` column unless the current user is an admin. Raises exception if non-admin attempts to change roles.
+
+### `approve_profile(target_user_id)`
+
+**Returns:** void  
+**Security:** definer  
+Approves a user profile (admin only). Sets profile_status to 'approved' and records review metadata.
+
+### `reject_profile(target_user_id, reason)`
+
+**Returns:** void  
+**Security:** definer  
+Rejects a user profile (admin only). Sets profile_status to 'rejected' and optionally stores rejection reason.
 
 ---
 

@@ -172,6 +172,40 @@ Accept Request → Chat Unlocked → Share Contacts (mutual) → Full Contact Ac
 
 ## Updates
 
+### 2025-11-15 - Profile System Implementation
+
+- **Implemented**: Complete profile submission and admin review workflow
+- **Database Changes**:
+  - Extended `user_profile` table with profile fields (photo, bio, DOB, gender, location)
+  - Added `profile_status` enum: incomplete → pending_review → approved/rejected
+  - Added `gender_type` enum and JSONB fields for religious_info and preferences
+  - Created `approve_profile()` and `reject_profile()` admin functions
+- **Middleware**:
+  - Enforces profile status flow: incomplete users → /profile/setup
+  - Pending users → /profile/pending, rejected users → /profile/rejected
+  - Admin bypass for all restrictions
+  - Approved users can access platform AND edit their profile anytime
+- **Pages**:
+  - `/profile/setup` - Profile creation form with all required fields
+  - `/profile/pending` - Waiting for admin review page
+  - `/profile/rejected` - Rejection notice with resubmit option
+  - `/admin` - Enhanced with profile review interface
+- **Features**:
+  - Users can edit profile even after approval (no lock-in)
+  - Admins can approve/reject with optional rejection reason
+  - Clean, minimal implementation with no over-engineering
+- **Migration**: `20251115000700_add_profile_system.sql`
+
+### 2025-11-15 - Fixed RLS Infinite Recursion Bug
+
+- **Issue**: RLS policies caused infinite recursion when querying `user_profile` role
+- **Root cause**: Policies checked `user_profile` table, which triggered the same policies again
+- **Fix**:
+  - Updated policies to use `is_admin()` function (security definer bypasses RLS)
+  - Added `prevent_role_escalation()` trigger to block role changes by non-admins
+  - Simplified policy logic to avoid self-referential queries
+- **Result**: Admin routes now work correctly, recursion eliminated
+
 ### 2025-11-15 - Role-Based Access Control Implementation
 
 - **Added**: User roles system with `user` and `admin` roles
