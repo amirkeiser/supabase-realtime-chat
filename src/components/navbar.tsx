@@ -1,7 +1,6 @@
 "use client";
 
 import { useCurrentUser } from "@/services/supabase/hooks/useCurrentUser";
-import { useUserRole } from "@/services/supabase/hooks/useUserRole";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
@@ -10,7 +9,6 @@ import { LogoutButton } from "@/services/supabase/components/logout-button";
 
 export default function Navbar() {
   const { user, isLoading } = useCurrentUser();
-  const { isAdmin } = useUserRole();
   const pathname = usePathname();
 
   return (
@@ -39,11 +37,6 @@ export default function Navbar() {
           )
         ) : (
           <div className="flex items-center gap-4">
-            {isAdmin && (
-              <Button asChild variant={pathname === '/admin' ? 'default' : 'ghost'} size="sm">
-                <Link href="/admin">Admin</Link>
-              </Button>
-            )}
             <span className="text-sm text-muted-foreground">
               {user.user_metadata?.preferred_username || user.email}
             </span>
