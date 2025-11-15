@@ -3,6 +3,7 @@
 import { useCurrentUser } from "@/services/supabase/hooks/useCurrentUser";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 import { Button } from "./ui/button";
 import { LogoutButton } from "@/services/supabase/components/logout-button";
 
@@ -13,7 +14,14 @@ export default function Navbar() {
   return (
     <div className="border-b bg-background h-header">
       <nav className="container mx-auto px-4 flex justify-between items-center h-full gap-4">
-        <Link href="/" className="text-xl font-bold">
+        <Link href="/" className="flex items-center gap-2 text-xl font-bold">
+          <Image
+            src="/sword-rose.svg"
+            alt="Maknoon logo"
+            width={24}
+            height={24}
+            className="w-6 h-6 invert dark:invert-0"
+          />
           Maknoon
         </Link>
 
