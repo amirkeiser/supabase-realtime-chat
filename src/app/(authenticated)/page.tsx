@@ -4,6 +4,12 @@ import { Heart, UserPlus, Users } from "lucide-react"
 import Link from "next/link"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Home - Maknoon",
+  description: "Connect with like-minded individuals",
+}
 
 export default async function Home() {
   const user = await getCurrentUser()

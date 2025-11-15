@@ -3,6 +3,12 @@ import { redirect } from "next/navigation";
 import { getPendingProfiles } from "@/services/supabase/actions/profiles";
 import { Card } from "@/components/ui/card";
 import AdminReviewActions from "./_components/admin-review-actions";
+import { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Admin - Maknoon",
+  description: "Admin dashboard",
+}
 
 export default async function AdminPage() {
   const supabase = await createClient();

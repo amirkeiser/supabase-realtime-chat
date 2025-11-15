@@ -3,6 +3,12 @@ import { getCurrentProfile } from '@/services/supabase/actions/profiles'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: "Profile Rejected - Maknoon",
+  description: "Profile review status",
+}
 
 export default async function ProfileRejectedPage() {
   const { data: profile, error } = await getCurrentProfile()

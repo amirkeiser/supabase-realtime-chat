@@ -1,4 +1,10 @@
 import { UpdatePasswordForm } from "@/services/supabase/components/update-password-form";
+import { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Update Password - Maknoon",
+  description: "Update your password",
+}
 
 export default function Page() {
   return (

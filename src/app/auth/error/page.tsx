@@ -1,4 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Error - Maknoon",
+  description: "An error occurred",
+}
 
 export default async function Page({
   searchParams,

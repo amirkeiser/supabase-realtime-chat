@@ -2,6 +2,12 @@ import { getCurrentUser } from "@/services/supabase/lib/getCurrentUser"
 import { createAdminClient } from "@/services/supabase/server"
 import { notFound } from "next/navigation"
 import { RoomClient } from "./_client"
+import { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Chat - Maknoon",
+  description: "Chat with your connection",
+}
 
 export default async function RoomPage({
   params,

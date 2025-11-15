@@ -3,6 +3,12 @@ import { getCurrentProfile } from '@/services/supabase/actions/profiles'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: "Profile Pending - Maknoon",
+  description: "Your profile is under review",
+}
 
 export default async function ProfilePendingPage() {
   const { data: profile, error } = await getCurrentProfile()

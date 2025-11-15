@@ -3,6 +3,12 @@ import { getCurrentUser } from "@/services/supabase/lib/getCurrentUser"
 import { redirect } from "next/navigation"
 import { ConnectionRequestsTab } from "../_components/connection-requests-tab"
 import { Suspense } from "react"
+import { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Requests - Maknoon",
+  description: "Review connection requests",
+}
 
 export default async function RequestsPage() {
   const user = await getCurrentUser()

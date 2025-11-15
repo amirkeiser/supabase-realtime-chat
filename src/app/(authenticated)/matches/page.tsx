@@ -3,6 +3,12 @@ import { getCurrentUser } from "@/services/supabase/lib/getCurrentUser"
 import { redirect } from "next/navigation"
 import { PotentialMatchesTab } from "../_components/potential-matches-tab"
 import { Suspense } from "react"
+import { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Matches - Maknoon",
+  description: "Discover potential matches",
+}
 
 export default async function MatchesPage() {
   const user = await getCurrentUser()

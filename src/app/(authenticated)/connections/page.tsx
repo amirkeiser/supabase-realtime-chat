@@ -3,6 +3,12 @@ import { getCurrentUser } from "@/services/supabase/lib/getCurrentUser"
 import { redirect } from "next/navigation"
 import { ConnectionsTab } from "../_components/connections-tab"
 import { Suspense } from "react"
+import { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Connections - Maknoon",
+  description: "Your active connections",
+}
 
 export default async function ConnectionsPage() {
   const user = await getCurrentUser()
