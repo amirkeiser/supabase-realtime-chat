@@ -113,18 +113,21 @@ export type Database = {
           id: string
           image_url: string | null
           name: string
+          role: 'user' | 'admin'
         }
         Insert: {
           created_at?: string
           id?: string
           image_url?: string | null
           name: string
+          role?: 'user' | 'admin'
         }
         Update: {
           created_at?: string
           id?: string
           image_url?: string | null
           name?: string
+          role?: 'user' | 'admin'
         }
         Relationships: []
       }

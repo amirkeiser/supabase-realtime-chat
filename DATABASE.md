@@ -12,9 +12,14 @@ User profile information linked to auth.users.
 | created_at | timestamp | no       |
 | name       | varchar   | no       |
 | image_url  | varchar   | yes      |
+| role       | user_role | no       |
 
 **Primary Key:** id  
 **Foreign Key:** id → auth.users.id
+
+**Enums:**
+
+- `user_role`: 'user', 'admin'
 
 ---
 
@@ -73,6 +78,19 @@ Messages sent in chat rooms.
 
 ## Row Level Security (RLS) Policies
 
+### `user_profile`
+
+- **SELECT**:
+  - Users can view their own profile
+  - Admins can view all profiles
+- **UPDATE**:
+  - Users can update their own profile **except** the `role` column
+  - Admins can update any profile including roles
+- **INSERT**:
+  - Users can only insert their own profile with `role = 'user'`
+- **DELETE**:
+  - No deletion allowed (use soft delete if needed)
+
 ### `chat_room`
 
 - **SELECT**: Authenticated users can read public rooms
@@ -116,7 +134,7 @@ Channel pattern: `room:${roomId}:messages`
 
 **Returns:** trigger  
 **Security:** definer  
-Creates a user_profile row with the user's id and name (from metadata or email).
+Creates a user_profile row with the user's id, name (from metadata or email), and role (default: 'user', or from metadata).
 
 ### `broadcast_new_message()`
 
@@ -129,6 +147,12 @@ Sends message data to realtime including: id, text, created_at, author_id, autho
 **Returns:** boolean  
 **Security:** definer  
 Checks if a user profile is complete.
+
+### `is_admin()`
+
+**Returns:** boolean  
+**Security:** definer  
+Returns true if the current authenticated user has the 'admin' role.
 
 ---
 

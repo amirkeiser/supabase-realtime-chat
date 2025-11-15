@@ -38,15 +38,40 @@ export async function updateSession(request: NextRequest) {
   const { data } = await supabase.auth.getClaims()
   const user = data?.claims
 
-  if (
-    !user &&
-    !request.nextUrl.pathname.startsWith('/login') &&
-    !request.nextUrl.pathname.startsWith('/auth')
-  ) {
-    // no user, potentially respond by redirecting the user to the login page
+  const isAuthRoute = request.nextUrl.pathname.startsWith('/auth')
+  const isAdminRoute = request.nextUrl.pathname.startsWith('/admin')
+
+  // Redirect unauthenticated users to login
+  if (!user && !isAuthRoute) {
     const url = request.nextUrl.clone()
     url.pathname = '/auth/login'
     return NextResponse.redirect(url)
+  }
+
+  // Handle authenticated users
+  if (user) {
+    // Get user role
+    const { data: profile, error: profileError } = await supabase
+      .from('user_profile')
+      .select('role')
+      .eq('id', user.sub)
+      .single()
+
+    const userRole = profile?.role
+
+    // Protect admin routes
+    if (isAdminRoute && userRole !== 'admin') {
+      const url = request.nextUrl.clone()
+      url.pathname = '/'
+      return NextResponse.redirect(url)
+    }
+
+    // Redirect admins to admin dashboard from home
+    if (userRole === 'admin' && request.nextUrl.pathname === '/') {
+      const url = request.nextUrl.clone()
+      url.pathname = '/admin'
+      return NextResponse.redirect(url)
+    }
   }
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is.
