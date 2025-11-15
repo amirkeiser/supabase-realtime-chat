@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   Home,
@@ -6,10 +6,12 @@ import {
   MessageSquare,
   UserCircle,
   Shield,
-} from "lucide-react"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import Image from "next/image"
+  Heart,
+  UserPlus,
+} from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import Image from "next/image";
 
 import {
   Sidebar,
@@ -21,8 +23,8 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
-import { useUserRole } from "@/services/supabase/hooks/useUserRole"
+} from "@/components/ui/sidebar";
+import { useUserRole } from "@/services/supabase/hooks/useUserRole";
 
 const navigationItems = [
   {
@@ -31,31 +33,36 @@ const navigationItems = [
     icon: Home,
   },
   {
-    title: "Connections",
-    url: "/",
-    icon: Users,
+    title: "Potential Matches",
+    url: "/matches",
+    icon: Heart,
   },
   {
-    title: "Rooms",
-    url: "/rooms/new",
-    icon: MessageSquare,
+    title: "Connection Requests",
+    url: "/requests",
+    icon: UserPlus,
+  },
+  {
+    title: "Connections",
+    url: "/connections",
+    icon: Users,
   },
   {
     title: "Profile",
     url: "/profile/setup",
     icon: UserCircle,
   },
-]
+];
 
 export function AppSidebar() {
-  const pathname = usePathname()
-  const { isAdmin } = useUserRole()
+  const pathname = usePathname();
+  const { isAdmin } = useUserRole();
 
   return (
     <Sidebar>
       <SidebarHeader className="h-16 border-b flex items-center p-0">
-        <Link 
-          href="/" 
+        <Link
+          href="/"
           className="flex items-center gap-2 px-4 text-xl font-bold group-data-[collapsible=icon]:justify-center w-full h-full"
         >
           <Image
@@ -98,6 +105,5 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
     </Sidebar>
-  )
+  );
 }
-

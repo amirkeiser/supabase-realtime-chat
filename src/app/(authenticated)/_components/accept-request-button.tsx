@@ -16,10 +16,11 @@ export function AcceptRequestButton({
     try {
       await acceptConnectionRequest(requestId)
       toast.success("Connection accepted! You can now chat.")
+      return { error: false }
     } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Failed to accept request"
-      )
+      const message = error instanceof Error ? error.message : "Failed to accept request"
+      toast.error(message)
+      return { error: true, message }
     }
   }
 

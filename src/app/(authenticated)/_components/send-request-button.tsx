@@ -16,10 +16,11 @@ export function SendRequestButton({
     try {
       await sendConnectionRequest(userId)
       toast.success("Connection request sent")
+      return { error: false }
     } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Failed to send request"
-      )
+      const message = error instanceof Error ? error.message : "Failed to send request"
+      toast.error(message)
+      return { error: true, message }
     }
   }
 

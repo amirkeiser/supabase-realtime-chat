@@ -16,10 +16,11 @@ export function DeclineRequestButton({
     try {
       await declineConnectionRequest(requestId)
       toast.success("Connection request declined")
+      return { error: false }
     } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Failed to decline request"
-      )
+      const message = error instanceof Error ? error.message : "Failed to decline request"
+      toast.error(message)
+      return { error: true, message }
     }
   }
 

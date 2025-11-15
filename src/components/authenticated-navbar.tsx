@@ -11,7 +11,7 @@ export default function AuthenticatedNavbar() {
   const { toggleSidebar } = useSidebar();
 
   return (
-    <header className="flex h-16 shrink-0 items-center border-b">
+    <header className="sticky top-0 z-50 flex h-16 shrink-0 items-center border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <button
         onClick={toggleSidebar}
         className="flex items-center justify-center h-full px-4 hover:bg-accent transition-colors"

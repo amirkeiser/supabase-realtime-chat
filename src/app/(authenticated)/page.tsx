@@ -1,14 +1,9 @@
-import {
-  getConnections,
-  getConnectionRequests,
-  getPotentialMatches,
-} from "@/services/supabase/actions/connections"
 import { getCurrentUser } from "@/services/supabase/lib/getCurrentUser"
 import { redirect } from "next/navigation"
-import { ConnectionsTab } from "./_components/connections-tab"
-import { ConnectionRequestsTab } from "./_components/connection-requests-tab"
-import { PotentialMatchesTab } from "./_components/potential-matches-tab"
-import { Suspense } from "react"
+import { Heart, UserPlus, Users } from "lucide-react"
+import Link from "next/link"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 
 export default async function Home() {
   const user = await getCurrentUser()
@@ -26,46 +21,59 @@ export default async function Home() {
           </p>
         </div>
 
-        <div className="space-y-8">
-          <section>
-            <h2 className="text-2xl font-semibold mb-4">Potential Matches</h2>
-            <Suspense fallback={<div>Loading matches...</div>}>
-              <MatchesSection />
-            </Suspense>
-          </section>
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <Card>
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <Heart className="w-5 h-5" />
+                <CardTitle>Potential Matches</CardTitle>
+              </div>
+              <CardDescription>
+                Discover people who share your values
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button asChild className="w-full">
+                <Link href="/matches">View Matches</Link>
+              </Button>
+            </CardContent>
+          </Card>
 
-          <section>
-            <h2 className="text-2xl font-semibold mb-4">
-              Connection Requests
-            </h2>
-            <Suspense fallback={<div>Loading requests...</div>}>
-              <RequestsSection />
-            </Suspense>
-          </section>
+          <Card>
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <UserPlus className="w-5 h-5" />
+                <CardTitle>Connection Requests</CardTitle>
+              </div>
+              <CardDescription>
+                Review and respond to connection requests
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button asChild className="w-full">
+                <Link href="/requests">View Requests</Link>
+              </Button>
+            </CardContent>
+          </Card>
 
-          <section>
-            <h2 className="text-2xl font-semibold mb-4">Your Connections</h2>
-            <Suspense fallback={<div>Loading connections...</div>}>
-              <ConnectionsSection />
-            </Suspense>
-          </section>
+          <Card>
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <Users className="w-5 h-5" />
+                <CardTitle>Your Connections</CardTitle>
+              </div>
+              <CardDescription>
+                Chat with people you&apos;ve connected with
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button asChild className="w-full">
+                <Link href="/connections">View Connections</Link>
+              </Button>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>
   )
-}
-
-async function MatchesSection() {
-  const matches = await getPotentialMatches()
-  return <PotentialMatchesTab matches={matches} />
-}
-
-async function RequestsSection() {
-  const requests = await getConnectionRequests()
-  return <ConnectionRequestsTab requests={requests} />
-}
-
-async function ConnectionsSection() {
-  const connections = await getConnections()
-  return <ConnectionsTab connections={connections} />
 }
