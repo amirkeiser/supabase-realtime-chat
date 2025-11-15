@@ -24,7 +24,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "https://local.co.uk",
+        hostname: "local.co.uk",
         port: "",
         pathname: "/**",
       },
