@@ -1,11 +1,11 @@
-import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar"
-import { AppSidebar } from "@/components/app-sidebar"
-import AuthenticatedNavbar from "@/components/authenticated-navbar"
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/app-sidebar";
+import AuthenticatedNavbar from "@/components/authenticated-navbar";
 
 export default function AuthenticatedLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <SidebarProvider>
@@ -15,6 +15,5 @@ export default function AuthenticatedLayout({
         {children}
       </SidebarInset>
     </SidebarProvider>
-  )
+  );
 }
-
