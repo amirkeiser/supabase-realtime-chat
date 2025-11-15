@@ -33,7 +33,7 @@ export default function ProfileSetupPage() {
       photo_url: formData.get("photo_url") as string,
       bio: formData.get("bio") as string,
       date_of_birth: formData.get("date_of_birth") as string,
-      gender: formData.get("gender") as "male" | "female" | "other",
+      gender: formData.get("gender") as "male" | "female",
       location: formData.get("location") as string,
       religious_info: {
         prayer_frequency: formData.get("prayer_frequency") as string,
@@ -124,7 +124,6 @@ export default function ProfileSetupPage() {
                 <option value="">Select gender</option>
                 <option value="male">Male</option>
                 <option value="female">Female</option>
-                <option value="other">Other</option>
               </select>
             </Field>
 

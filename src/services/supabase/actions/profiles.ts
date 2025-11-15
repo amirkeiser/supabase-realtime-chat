@@ -2,15 +2,16 @@
 
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/services/supabase/server'
+import type { Json } from '@/services/supabase/types/database'
 
 export type ProfileFormData = {
   photo_url: string
   bio: string
   date_of_birth: string
-  gender: 'male' | 'female' | 'other'
+  gender: 'male' | 'female'
   location: string
-  religious_info: Record<string, unknown>
-  preferences: Record<string, unknown>
+  religious_info: Json
+  preferences: Json
 }
 
 export async function submitProfile(data: ProfileFormData) {
@@ -79,7 +80,7 @@ export async function rejectProfile(userId: string, reason?: string) {
 
   const { error } = await supabase.rpc('reject_profile', {
     target_user_id: userId,
-    reason: reason || null,
+    reason: reason || undefined,
   })
 
   if (error) {
