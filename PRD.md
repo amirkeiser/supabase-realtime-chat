@@ -172,6 +172,56 @@ Accept Request → Chat Unlocked → Share Contacts (mutual) → Full Contact Ac
 
 ## Updates
 
+### 2025-11-15 - Fix RLS Policy for Viewing Profiles
+
+- **Issue**: Users couldn't see potential matches due to restrictive RLS policy
+- **Root Cause**: `user_profile` SELECT policy only allowed users to view their own profile
+- **Fix**: Updated policy to allow viewing approved profiles (for matchmaking)
+- **New Policy**: Users can view their own profile + any approved profile
+- **Migration**: `20251115000900_allow_viewing_approved_profiles.sql`
+
+### 2025-11-15 - Connection System Implementation
+
+- **Implemented**: Complete connection request and matching flow
+- **Database Changes**:
+  - Created `connection_requests` table to track pending/accepted/declined requests
+  - Created `connections` table to store accepted connections between users
+  - Added `connection_request_status` enum: 'pending', 'accepted', 'declined'
+  - Added `connection_id` foreign key to `chat_room` table
+  - User IDs ordered consistently (user1_id < user2_id) to prevent duplicates
+- **Functions**:
+  - `create_connection(request_id)` - Creates connection and private chat room atomically
+  - `are_users_connected(user_id1, user_id2)` - Helper to check connection status
+  - `get_connection_between_users(user_id1, user_id2)` - Get connection ID
+- **Home Page**:
+  - Three-section layout replacing old room list
+  - **Potential Matches**: Shows approved users with bio/religious info (name/photo hidden)
+  - **Connection Requests**: Incoming requests with accept/decline actions
+  - **Connections**: Accepted connections with name/photo revealed, direct chat access
+- **Server Actions**: Created `connections.ts` with full CRUD operations
+  - `getPotentialMatches()` - Get approved users excluding existing connections/requests
+  - `getConnectionRequests()` - Get incoming pending requests
+  - `getConnections()` - Get user's accepted connections
+  - `sendConnectionRequest()` - Send request to another user
+  - `acceptConnectionRequest()` - Accept request and create connection + chat
+  - `declineConnectionRequest()` - Decline request
+  - `cancelConnectionRequest()` - Cancel sent pending request
+- **RLS Security**:
+  - Users can only view their own requests/connections
+  - Requests can only be sent to approved users
+  - Only receivers can accept/decline requests
+  - Direct connection inserts blocked (must use `create_connection()` function)
+- **Chat Integration**: Accepting a connection automatically creates a private chat room and adds both users
+- **Privacy Levels**:
+  - Level 1 (Matches): Bio, religious info, preferences visible; name/photo hidden
+  - Level 2 (Connections): All info visible including name/photo
+  - Level 3 (Contact sharing): Not yet implemented
+- **MVP Simplifications Applied**:
+  - No matching algorithm (shows all approved users)
+  - No contact details sharing (future feature)
+  - No block functionality (future feature)
+- **Migration**: `20251115000800_add_connection_system.sql`
+
 ### 2025-11-15 - Profile System Implementation
 
 - **Implemented**: Complete profile submission and admin review workflow

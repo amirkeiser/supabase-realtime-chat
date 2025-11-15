@@ -42,16 +42,20 @@ User profile information linked to auth.users.
 
 ### `chat_room`
 
-Chat rooms that can be public or private.
+Chat rooms that can be public or private. Can be linked to connections for private chats.
 
-| Column     | Type      | Nullable |
-| ---------- | --------- | -------- |
-| id         | uuid      | no       |
-| created_at | timestamp | no       |
-| name       | varchar   | no       |
-| is_public  | boolean   | no       |
+| Column        | Type      | Nullable |
+| ------------- | --------- | -------- |
+| id            | uuid      | no       |
+| created_at    | timestamp | no       |
+| name          | varchar   | no       |
+| is_public     | boolean   | no       |
+| connection_id | uuid      | yes      |
 
-**Primary Key:** id
+**Primary Key:** id  
+**Foreign Keys:**
+
+- connection_id → connections.id
 
 ---
 
@@ -93,12 +97,71 @@ Messages sent in chat rooms.
 
 ---
 
+### `connection_requests`
+
+Stores connection requests between users with their status.
+
+| Column       | Type                      | Nullable | Default   |
+| ------------ | ------------------------- | -------- | --------- |
+| id           | uuid                      | no       |           |
+| created_at   | timestamp                 | no       |           |
+| sender_id    | uuid                      | no       |           |
+| receiver_id  | uuid                      | no       |           |
+| status       | connection_request_status | no       | 'pending' |
+| responded_at | timestamp                 | yes      |           |
+
+**Primary Key:** id  
+**Foreign Keys:**
+
+- sender_id → user_profile.id
+- receiver_id → user_profile.id
+
+**Enums:**
+
+- `connection_request_status`: 'pending', 'accepted', 'declined'
+
+**Constraints:**
+
+- unique (sender_id, receiver_id) - prevents duplicate requests
+- sender_id != receiver_id - prevents self-requests
+
+---
+
+### `connections`
+
+Stores accepted connections between users. User IDs are ordered (user1_id < user2_id).
+
+| Column                | Type      | Nullable |
+| --------------------- | --------- | -------- |
+| id                    | uuid      | no       |
+| created_at            | timestamp | no       |
+| user1_id              | uuid      | no       |
+| user2_id              | uuid      | no       |
+| connection_request_id | uuid      | no       |
+| chat_room_id          | uuid      | yes      |
+
+**Primary Key:** id  
+**Foreign Keys:**
+
+- user1_id → user_profile.id
+- user2_id → user_profile.id
+- connection_request_id → connection_requests.id
+- chat_room_id → chat_room.id
+
+**Constraints:**
+
+- user1_id < user2_id - ensures consistent ordering
+- unique (user1_id, user2_id) - prevents duplicate connections
+
+---
+
 ## Row Level Security (RLS) Policies
 
 ### `user_profile`
 
 - **SELECT**:
-  - Users can view their own profile
+  - Users can view their own profile (any status)
+  - Users can view any approved profile (for matchmaking)
   - Admins can view all profiles
 - **UPDATE**:
   - Users can update their own profile **except** the `role` column
@@ -111,13 +174,31 @@ Messages sent in chat rooms.
 
 ### `chat_room`
 
-- **SELECT**: Authenticated users can read public rooms
+- **SELECT**:
+  - Users can view public rooms
+  - Users can view rooms they're members of
+  - Users can view connection-based rooms they're part of
 
 ### `chat_room_member`
 
 - **SELECT**: Users can read their own memberships
-- **INSERT**: Users can join public rooms (only themselves)
+- **INSERT**:
+  - Users can join public rooms (only themselves)
+  - System can add users to connection rooms
 - **DELETE**: Users can remove themselves from rooms
+
+### `connection_requests`
+
+- **SELECT**: Users can view requests where they are sender or receiver
+- **INSERT**: Users can send requests to approved users (not themselves)
+- **UPDATE**: Only receivers can update requests (to accept/decline)
+- **DELETE**: Users can delete their own pending sent requests
+
+### `connections`
+
+- **SELECT**: Users can view connections they are part of
+- **INSERT**: Blocked (must use `create_connection()` function)
+- **DELETE**: Users can delete their own connections
 
 ### `realtime.messages`
 
@@ -196,6 +277,31 @@ Approves a user profile (admin only). Sets profile_status to 'approved' and reco
 **Returns:** void  
 **Security:** definer  
 Rejects a user profile (admin only). Sets profile_status to 'rejected' and optionally stores rejection reason.
+
+### `are_users_connected(user_id1, user_id2)`
+
+**Returns:** boolean  
+**Security:** definer  
+Checks if two users have an established connection.
+
+### `get_connection_between_users(user_id1, user_id2)`
+
+**Returns:** uuid  
+**Security:** definer  
+Returns the connection ID between two users if it exists.
+
+### `create_connection(request_id)`
+
+**Returns:** uuid  
+**Security:** definer  
+Creates a connection when a request is accepted. This function:
+
+- Validates the request is pending and belongs to the current user
+- Creates a private chat room
+- Creates the connection record
+- Updates the request status to 'accepted'
+- Adds both users to the chat room
+  Returns the connection ID.
 
 ---
 

@@ -10,6 +10,7 @@ import {
 import { FormEvent, useState } from "react"
 import { toast } from "sonner"
 import { Message, sendMessage } from "@/services/supabase/actions/messages"
+import { generateUUID } from "@/lib/uuid"
 
 type Props = {
   roomId: string
@@ -32,7 +33,7 @@ export function ChatInput({
     if (!text) return
 
     setMessage("")
-    const id = crypto.randomUUID()
+    const id = generateUUID()
     onSend({ id, text })
     const result = await sendMessage({ id, text, roomId })
     if (result.error) {
