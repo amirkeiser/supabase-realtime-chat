@@ -31,7 +31,7 @@ export default function ProfileSetupPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [existingPhotoUrl, setExistingPhotoUrl] = useState<string | null>(null);
-  
+
   // Setup dropzone for photo upload
   const dropzoneProps = useSupabaseUpload({
     bucketName: "profile-photos",
@@ -47,7 +47,7 @@ export default function ProfileSetupPage() {
       if (!user?.id) return;
 
       const supabase = createClient();
-      
+
       // List files in user's folder
       const { data: files, error: listError } = await supabase.storage
         .from("profile-photos")
@@ -83,16 +83,16 @@ export default function ProfileSetupPage() {
     // If user added a new photo, upload it
     if (dropzoneProps.files.length > 0 && !dropzoneProps.isSuccess) {
       await dropzoneProps.onUpload();
-      
+
       // After upload, get the new photo URL
       const supabase = createClient();
       const uploadedFile = dropzoneProps.files[0];
       const filePath = `${user?.id}/${uploadedFile.name}`;
-      
+
       const { data: urlData } = supabase.storage
         .from("profile-photos")
         .getPublicUrl(filePath);
-      
+
       photoUrl = urlData.publicUrl;
     }
 
@@ -108,11 +108,11 @@ export default function ProfileSetupPage() {
       const supabase = createClient();
       const uploadedFile = dropzoneProps.files[0];
       const filePath = `${user?.id}/${uploadedFile.name}`;
-      
+
       const { data: urlData } = supabase.storage
         .from("profile-photos")
         .getPublicUrl(filePath);
-      
+
       photoUrl = urlData.publicUrl;
     }
 
@@ -159,7 +159,7 @@ export default function ProfileSetupPage() {
                   ? "You have an existing photo. Upload a new one to replace it."
                   : "Upload a clear photo of yourself (max 5MB)"}
               </FieldDescription>
-              
+
               {existingPhotoUrl && dropzoneProps.files.length === 0 && (
                 <div className="mt-2 mb-4">
                   <div className="border-2 border-solid border-primary rounded-lg p-4 bg-primary/5">
@@ -181,7 +181,7 @@ export default function ProfileSetupPage() {
                   </div>
                 </div>
               )}
-              
+
               <Dropzone {...dropzoneProps} className="mt-2">
                 <DropzoneEmptyState />
                 <DropzoneContent />
@@ -191,9 +191,7 @@ export default function ProfileSetupPage() {
             {/* Bio */}
             <Field>
               <FieldLabel htmlFor="bio">Bio *</FieldLabel>
-              <FieldDescription>
-                Tell us about yourself
-              </FieldDescription>
+              <FieldDescription>Tell us about yourself</FieldDescription>
               <Textarea
                 id="bio"
                 name="bio"
@@ -247,7 +245,8 @@ export default function ProfileSetupPage() {
 
               <Field>
                 <FieldDescription>
-                  This is where we can potentially ask religious info, if we choose to.
+                  This is where we can potentially ask religious info, if we
+                  choose to.
                 </FieldDescription>
               </Field>
             </div>
@@ -258,7 +257,8 @@ export default function ProfileSetupPage() {
 
               <Field>
                 <FieldDescription>
-                  This is where we can potentially ask matchmaking preferences, if we choose to.
+                  This is where we can potentially ask matchmaking preferences,
+                  if we choose to.
                 </FieldDescription>
               </Field>
             </div>
