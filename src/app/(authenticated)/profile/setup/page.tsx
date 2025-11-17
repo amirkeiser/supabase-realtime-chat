@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   submitProfile,
@@ -16,21 +16,110 @@ import {
   FieldError,
 } from "@/components/ui/field";
 import { Card } from "@/components/ui/card";
+import {
+  Dropzone,
+  DropzoneContent,
+  DropzoneEmptyState,
+} from "@/components/dropzone";
+import { useSupabaseUpload } from "@/hooks/use-supabase-upload";
+import { useCurrentUser } from "@/services/supabase/hooks/useCurrentUser";
+import { createClient } from "@/services/supabase/client";
 
 export default function ProfileSetupPage() {
   const router = useRouter();
+  const { user } = useCurrentUser();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [existingPhotoUrl, setExistingPhotoUrl] = useState<string | null>(null);
+  
+  // Setup dropzone for photo upload
+  const dropzoneProps = useSupabaseUpload({
+    bucketName: "profile-photos",
+    path: user?.id, // Upload to user's folder
+    allowedMimeTypes: ["image/*"],
+    maxFiles: 1,
+    maxFileSize: 5 * 1024 * 1024, // 5MB
+  });
+
+  // Check for existing photo on mount
+  useEffect(() => {
+    const checkExistingPhoto = async () => {
+      if (!user?.id) return;
+
+      const supabase = createClient();
+      
+      // List files in user's folder
+      const { data: files, error: listError } = await supabase.storage
+        .from("profile-photos")
+        .list(user.id, {
+          limit: 1,
+          sortBy: { column: "created_at", order: "desc" },
+        });
+
+      if (listError || !files || files.length === 0) {
+        return;
+      }
+
+      // Get the public URL for the most recent file
+      const fileName = files[0].name;
+      const filePath = `${user.id}/${fileName}`;
+      const { data: urlData } = supabase.storage
+        .from("profile-photos")
+        .getPublicUrl(filePath);
+
+      setExistingPhotoUrl(urlData.publicUrl);
+    };
+
+    checkExistingPhoto();
+  }, [user?.id]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
+    let photoUrl = existingPhotoUrl;
+
+    // If user added a new photo, upload it
+    if (dropzoneProps.files.length > 0 && !dropzoneProps.isSuccess) {
+      await dropzoneProps.onUpload();
+      
+      // After upload, get the new photo URL
+      const supabase = createClient();
+      const uploadedFile = dropzoneProps.files[0];
+      const filePath = `${user?.id}/${uploadedFile.name}`;
+      
+      const { data: urlData } = supabase.storage
+        .from("profile-photos")
+        .getPublicUrl(filePath);
+      
+      photoUrl = urlData.publicUrl;
+    }
+
+    // Check if we have a photo (either existing or newly uploaded)
+    if (!photoUrl && !dropzoneProps.isSuccess) {
+      setError("Please upload a profile photo before submitting");
+      setLoading(false);
+      return;
+    }
+
+    // If a new photo was uploaded successfully, use that URL
+    if (dropzoneProps.isSuccess && dropzoneProps.files.length > 0) {
+      const supabase = createClient();
+      const uploadedFile = dropzoneProps.files[0];
+      const filePath = `${user?.id}/${uploadedFile.name}`;
+      
+      const { data: urlData } = supabase.storage
+        .from("profile-photos")
+        .getPublicUrl(filePath);
+      
+      photoUrl = urlData.publicUrl;
+    }
+
     const formData = new FormData(e.currentTarget);
 
     const data: ProfileFormData = {
-      photo_url: formData.get("photo_url") as string,
+      photo_url: photoUrl!,
       bio: formData.get("bio") as string,
       date_of_birth: formData.get("date_of_birth") as string,
       gender: formData.get("gender") as "male" | "female",
@@ -70,19 +159,41 @@ export default function ProfileSetupPage() {
 
         <Card className="p-6">
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Photo URL */}
+            {/* Profile Photo Upload */}
             <Field>
-              <FieldLabel htmlFor="photo_url">Profile Photo URL *</FieldLabel>
+              <FieldLabel>Profile Photo *</FieldLabel>
               <FieldDescription>
-                Enter the URL of your profile photo
+                {existingPhotoUrl
+                  ? "You have an existing photo. Upload a new one to replace it."
+                  : "Upload a clear photo of yourself (max 5MB)"}
               </FieldDescription>
-              <Input
-                id="photo_url"
-                name="photo_url"
-                type="url"
-                required
-                placeholder="https://example.com/photo.jpg"
-              />
+              
+              {existingPhotoUrl && dropzoneProps.files.length === 0 && (
+                <div className="mt-2 mb-4">
+                  <div className="border-2 border-solid border-primary rounded-lg p-4 bg-primary/5">
+                    <div className="flex items-center gap-4">
+                      <img
+                        src={existingPhotoUrl}
+                        alt="Current profile photo"
+                        className="w-20 h-20 object-cover rounded-lg"
+                      />
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-primary">
+                          Current photo uploaded
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Upload a new photo below to replace it
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              <Dropzone {...dropzoneProps} className="mt-2">
+                <DropzoneEmptyState />
+                <DropzoneContent />
+              </Dropzone>
             </Field>
 
             {/* Bio */}
