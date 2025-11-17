@@ -50,7 +50,7 @@ const navigationItems = [
   },
   {
     title: "Profile",
-    url: "/setup",
+    url: "/profile",
     icon: UserCircle,
   },
 ];

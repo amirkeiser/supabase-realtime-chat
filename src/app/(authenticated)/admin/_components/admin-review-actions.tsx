@@ -81,7 +81,7 @@ export default function AdminReviewActions({ userId }: { userId: string }) {
         disabled={loading}
         size="sm"
       >
-        ✅ Approve
+        Approve
       </Button>
       <Button
         onClick={() => setShowRejectForm(true)}
@@ -89,7 +89,7 @@ export default function AdminReviewActions({ userId }: { userId: string }) {
         variant="destructive"
         size="sm"
       >
-        ❌ Reject
+        Reject
       </Button>
     </div>
   )

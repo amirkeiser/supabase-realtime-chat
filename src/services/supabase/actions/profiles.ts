@@ -1,7 +1,7 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { createClient } from '@/services/supabase/server'
+import { createClient, createAdminClient } from '@/services/supabase/server'
 import type { Json } from '@/services/supabase/types/database'
 
 export type ProfileFormData = {
@@ -93,6 +93,7 @@ export async function rejectProfile(userId: string, reason?: string) {
 
 export async function getPendingProfiles() {
   const supabase = await createClient()
+  const adminClient = createAdminClient()
 
   const { data, error } = await supabase
     .from('user_profile')
@@ -102,6 +103,20 @@ export async function getPendingProfiles() {
 
   if (error) {
     return { error: error.message, data: null }
+  }
+
+  // Fetch emails for each user
+  if (data) {
+    const profilesWithEmail = await Promise.all(
+      data.map(async (profile) => {
+        const { data: authUser } = await adminClient.auth.admin.getUserById(profile.id)
+        return {
+          ...profile,
+          email: authUser?.user?.email || null,
+        }
+      })
+    )
+    return { data: profilesWithEmail, error: null }
   }
 
   return { data, error: null }
