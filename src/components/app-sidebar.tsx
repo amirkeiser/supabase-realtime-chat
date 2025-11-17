@@ -8,6 +8,7 @@ import {
   Shield,
   Heart,
   UserPlus,
+  TestTube,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -49,7 +50,7 @@ const navigationItems = [
   },
   {
     title: "Profile",
-    url: "/profile/setup",
+    url: "/setup",
     icon: UserCircle,
   },
 ];
@@ -91,14 +92,24 @@ export function AppSidebar() {
                 </SidebarMenuItem>
               ))}
               {isAdmin && (
-                <SidebarMenuItem>
-                  <SidebarMenuButton asChild isActive={pathname === "/admin"}>
-                    <Link href="/admin">
-                      <Shield />
-                      <span>Admin</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
+                <>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild isActive={pathname === "/admin"}>
+                      <Link href="/admin">
+                        <Shield />
+                        <span>Admin</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild isActive={pathname === "/admin/test-chat"}>
+                      <Link href="/admin/test-chat">
+                        <TestTube />
+                        <span>Test Chat</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                </>
               )}
             </SidebarMenu>
           </SidebarGroupContent>

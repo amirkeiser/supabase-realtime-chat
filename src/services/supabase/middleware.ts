@@ -60,7 +60,7 @@ export async function updateSession(request: NextRequest) {
     const userRole = profile?.role
     const profileStatus = profile?.profile_status
     const currentPath = request.nextUrl.pathname
-    const isProfileRoute = currentPath.startsWith('/profile')
+    const isProfileSetupRoute = currentPath === '/setup' || currentPath === '/pending' || currentPath === '/rejected'
 
     // Redirect authenticated users away from auth routes
     if (isAuthRoute) {
@@ -74,13 +74,13 @@ export async function updateSession(request: NextRequest) {
       
       switch (profileStatus) {
         case 'incomplete':
-          url.pathname = '/profile/setup'
+          url.pathname = '/setup'
           break
         case 'pending_review':
-          url.pathname = '/profile/pending'
+          url.pathname = '/pending'
           break
         case 'rejected':
-          url.pathname = '/profile/rejected'
+          url.pathname = '/rejected'
           break
         case 'approved':
           url.pathname = '/'
@@ -112,33 +112,33 @@ export async function updateSession(request: NextRequest) {
     // Enforce profile status flow for regular users
     switch (profileStatus) {
       case 'incomplete':
-        if (currentPath !== '/profile/setup') {
+        if (currentPath !== '/setup') {
           const url = request.nextUrl.clone()
-          url.pathname = '/profile/setup'
+          url.pathname = '/setup'
           return NextResponse.redirect(url)
         }
         break
 
       case 'pending_review':
-        if (currentPath !== '/profile/pending') {
+        if (currentPath !== '/pending') {
           const url = request.nextUrl.clone()
-          url.pathname = '/profile/pending'
+          url.pathname = '/pending'
           return NextResponse.redirect(url)
         }
         break
 
       case 'rejected':
         // Allow access to both rejected page and setup page for editing
-        if (currentPath !== '/profile/rejected' && currentPath !== '/profile/setup') {
+        if (currentPath !== '/rejected' && currentPath !== '/setup') {
           const url = request.nextUrl.clone()
-          url.pathname = '/profile/rejected'
+          url.pathname = '/rejected'
           return NextResponse.redirect(url)
         }
         break
 
       case 'approved':
         // Prevent approved users from accessing profile status pages
-        if (isProfileRoute) {
+        if (isProfileSetupRoute) {
           const url = request.nextUrl.clone()
           url.pathname = '/'
           return NextResponse.redirect(url)

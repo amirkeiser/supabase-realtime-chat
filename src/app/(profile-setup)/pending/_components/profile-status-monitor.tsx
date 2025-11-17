@@ -34,7 +34,7 @@ export function ProfileStatusMonitor({ userId }: { userId: string }) {
           } else if (newStatus === 'rejected') {
             toast.error('Your profile was not approved. Please review the feedback.')
             setTimeout(() => {
-              router.push('/profile/rejected')
+              router.push('/rejected')
               router.refresh()
             }, 1500)
           }

@@ -4,6 +4,8 @@ import { getPendingProfiles } from "@/services/supabase/actions/profiles";
 import { Card } from "@/components/ui/card";
 import AdminReviewActions from "./_components/admin-review-actions";
 import { Metadata } from "next"
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Admin - Maknoon",
@@ -38,7 +40,12 @@ export default async function AdminPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">Admin Dashboard</h1>
+        <div className="flex items-center justify-between mb-2">
+          <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+          <Button asChild>
+            <Link href="/admin/test-chat">Test Chat</Link>
+          </Button>
+        </div>
         <p className="text-muted-foreground mb-8">Welcome, {profile.name}</p>
 
         <div className="grid gap-6">

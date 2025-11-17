@@ -142,12 +142,12 @@ export default function ProfileSetupPage() {
       setError(result.error);
       setLoading(false);
     } else {
-      router.push("/profile/pending");
+      router.push("/pending");
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center py-8 px-4">
+    <div className="flex items-center justify-center py-8 px-4">
       <div className="w-full max-w-2xl">
         <div className="mb-6 text-center">
           <h1 className="text-3xl font-bold">Complete Your Profile</h1>

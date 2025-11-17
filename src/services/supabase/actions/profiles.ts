@@ -35,7 +35,7 @@ export async function submitProfile(data: ProfileFormData) {
     return { error: error.message }
   }
 
-  revalidatePath('/profile/pending')
+  revalidatePath('/pending')
   return { success: true }
 }
 
