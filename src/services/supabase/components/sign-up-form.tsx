@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export function SignUpForm({
   className,
@@ -26,6 +26,21 @@ export function SignUpForm({
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+
+  // Check if user is already logged in and redirect them
+  useEffect(() => {
+    const checkUser = async () => {
+      const supabase = createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (user) {
+        router.refresh();
+        router.push("/");
+      }
+    };
+    checkUser();
+  }, [router]);
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,10 +59,11 @@ export function SignUpForm({
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/`,
+          emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/`,
         },
       });
       if (error) throw error;
+      router.refresh();
       router.push("/auth/sign-up-success");
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred");

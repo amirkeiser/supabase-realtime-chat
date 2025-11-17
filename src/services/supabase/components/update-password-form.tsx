@@ -33,7 +33,9 @@ export function UpdatePasswordForm({
     try {
       const { error } = await supabase.auth.updateUser({ password });
       if (error) throw error;
-      // Update this route to redirect to an authenticated route. The user already has an active session.
+      // Refresh the router to revalidate server components and run middleware
+      router.refresh();
+      // Redirect to home - middleware will handle proper routing based on profile status
       router.push("/");
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred");
