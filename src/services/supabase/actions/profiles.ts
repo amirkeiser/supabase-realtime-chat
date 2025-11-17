@@ -5,11 +5,11 @@ import { createClient, createAdminClient } from '@/services/supabase/server'
 import type { Json } from '@/services/supabase/types/database'
 
 export type ProfileFormData = {
-  photo_url: string
-  bio: string
-  date_of_birth: string
-  gender: 'male' | 'female'
-  location: string
+  photo_url?: string | null
+  bio?: string | null
+  date_of_birth?: string | null
+  gender?: 'male' | 'female' | null
+  location?: string | null
   religious_info: Json
   preferences: Json
 }

@@ -34,7 +34,12 @@ export default function ProfilePage() {
   const [loadingProfile, setLoadingProfile] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [existingPhotoUrl, setExistingPhotoUrl] = useState<string | null>(null);
-  const [formData, setFormData] = useState<Partial<ProfileFormData>>({
+  const [formData, setFormData] = useState<{
+    bio?: string | null;
+    date_of_birth?: string | null;
+    gender?: "male" | "female" | null;
+    location?: string | null;
+  }>({
     bio: "",
     date_of_birth: "",
     gender: undefined,
@@ -66,12 +71,12 @@ export default function ProfilePage() {
 
       if (result.data) {
         setFormData({
-          bio: result.data.bio || "",
-          date_of_birth: result.data.date_of_birth || "",
-          gender: result.data.gender || undefined,
-          location: result.data.location || "",
+          bio: result.data.bio ?? "",
+          date_of_birth: result.data.date_of_birth ?? "",
+          gender: result.data.gender ?? undefined,
+          location: result.data.location ?? "",
         });
-        setExistingPhotoUrl(result.data.photo_url || null);
+        setExistingPhotoUrl(result.data.photo_url ?? null);
       }
 
       setLoadingProfile(false);
@@ -149,10 +154,10 @@ export default function ProfilePage() {
     }
 
     const updateData: Partial<ProfileFormData> = {
-      bio: formData.bio,
-      date_of_birth: formData.date_of_birth,
-      gender: formData.gender,
-      location: formData.location,
+      bio: formData.bio || null,
+      date_of_birth: formData.date_of_birth || null,
+      gender: formData.gender || null,
+      location: formData.location || null,
     };
 
     if (photoUrl) {
@@ -239,7 +244,7 @@ export default function ProfilePage() {
               <Textarea
                 id="bio"
                 name="bio"
-                value={formData.bio}
+                value={formData.bio ?? ""}
                 onChange={(e) =>
                   setFormData({ ...formData, bio: e.target.value })
                 }
@@ -255,7 +260,7 @@ export default function ProfilePage() {
                 id="date_of_birth"
                 name="date_of_birth"
                 type="date"
-                value={formData.date_of_birth}
+                value={formData.date_of_birth ?? ""}
                 onChange={(e) =>
                   setFormData({ ...formData, date_of_birth: e.target.value })
                 }
@@ -290,7 +295,7 @@ export default function ProfilePage() {
                 id="location"
                 name="location"
                 type="text"
-                value={formData.location}
+                value={formData.location ?? ""}
                 onChange={(e) =>
                   setFormData({ ...formData, location: e.target.value })
                 }

@@ -96,12 +96,7 @@ export default function ProfileSetupPage() {
       photoUrl = urlData.publicUrl;
     }
 
-    // Check if we have a photo (either existing or newly uploaded)
-    if (!photoUrl && !dropzoneProps.isSuccess) {
-      setError("Please upload a profile photo before submitting");
-      setLoading(false);
-      return;
-    }
+    // Photo is optional now, so we don't need to check for it
 
     // If a new photo was uploaded successfully, use that URL
     if (dropzoneProps.isSuccess && dropzoneProps.files.length > 0) {
@@ -116,23 +111,25 @@ export default function ProfileSetupPage() {
       photoUrl = urlData.publicUrl;
     }
 
-    const formData = new FormData(e.currentTarget);
+    // Get form element and extract values directly
+    const form = e.target as HTMLFormElement;
+    const formElements = form.elements as any;
 
     const data: ProfileFormData = {
-      photo_url: photoUrl!,
-      bio: formData.get("bio") as string,
-      date_of_birth: formData.get("date_of_birth") as string,
-      gender: formData.get("gender") as "male" | "female",
-      location: formData.get("location") as string,
+      photo_url: photoUrl || null,
+      bio: formElements.bio?.value || null,
+      date_of_birth: formElements.date_of_birth?.value || null,
+      gender: formElements.gender?.value || null,
+      location: formElements.location?.value || null,
       religious_info: {
-        prayer_frequency: formData.get("prayer_frequency") as string,
-        sect: formData.get("sect") as string,
-        hijab_preference: formData.get("hijab_preference") as string,
+        prayer_frequency: formElements.prayer_frequency?.value || null,
+        sect: formElements.sect?.value || null,
+        hijab_preference: formElements.hijab_preference?.value || null,
       },
       preferences: {
-        age_min: Number(formData.get("age_min")),
-        age_max: Number(formData.get("age_max")),
-        location_preference: formData.get("location_preference") as string,
+        age_min: formElements.age_min?.value ? Number(formElements.age_min.value) : null,
+        age_max: formElements.age_max?.value ? Number(formElements.age_max.value) : null,
+        location_preference: formElements.location_preference?.value || null,
       },
     };
 
@@ -161,7 +158,7 @@ export default function ProfileSetupPage() {
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Profile Photo Upload */}
             <Field>
-              <FieldLabel>Profile Photo *</FieldLabel>
+              <FieldLabel>Profile Photo</FieldLabel>
               <FieldDescription>
                 {existingPhotoUrl
                   ? "You have an existing photo. Upload a new one to replace it."
@@ -198,15 +195,13 @@ export default function ProfileSetupPage() {
 
             {/* Bio */}
             <Field>
-              <FieldLabel htmlFor="bio">Bio *</FieldLabel>
+              <FieldLabel htmlFor="bio">Bio</FieldLabel>
               <FieldDescription>
-                Tell us about yourself (minimum 50 characters)
+                Tell us about yourself
               </FieldDescription>
               <Textarea
                 id="bio"
                 name="bio"
-                required
-                minLength={50}
                 rows={4}
                 placeholder="Write a brief introduction about yourself..."
               />
@@ -214,22 +209,20 @@ export default function ProfileSetupPage() {
 
             {/* Date of Birth */}
             <Field>
-              <FieldLabel htmlFor="date_of_birth">Date of Birth *</FieldLabel>
+              <FieldLabel htmlFor="date_of_birth">Date of Birth</FieldLabel>
               <Input
                 id="date_of_birth"
                 name="date_of_birth"
                 type="date"
-                required
               />
             </Field>
 
             {/* Gender */}
             <Field>
-              <FieldLabel htmlFor="gender">Gender *</FieldLabel>
+              <FieldLabel htmlFor="gender">Gender</FieldLabel>
               <select
                 id="gender"
                 name="gender"
-                required
                 className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
               >
                 <option value="">Select gender</option>
@@ -240,12 +233,11 @@ export default function ProfileSetupPage() {
 
             {/* Location */}
             <Field>
-              <FieldLabel htmlFor="location">Location *</FieldLabel>
+              <FieldLabel htmlFor="location">Location</FieldLabel>
               <Input
                 id="location"
                 name="location"
                 type="text"
-                required
                 placeholder="City, Country"
               />
             </Field>
@@ -256,12 +248,11 @@ export default function ProfileSetupPage() {
 
               <Field>
                 <FieldLabel htmlFor="prayer_frequency">
-                  Prayer Frequency *
+                  Prayer Frequency
                 </FieldLabel>
                 <select
                   id="prayer_frequency"
                   name="prayer_frequency"
-                  required
                   className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
                 >
                   <option value="">Select frequency</option>
@@ -272,11 +263,10 @@ export default function ProfileSetupPage() {
               </Field>
 
               <Field>
-                <FieldLabel htmlFor="sect">Sect *</FieldLabel>
+                <FieldLabel htmlFor="sect">Sect</FieldLabel>
                 <select
                   id="sect"
                   name="sect"
-                  required
                   className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
                 >
                   <option value="">Select sect</option>
@@ -288,12 +278,11 @@ export default function ProfileSetupPage() {
 
               <Field>
                 <FieldLabel htmlFor="hijab_preference">
-                  Hijab Preference *
+                  Hijab Preference
                 </FieldLabel>
                 <select
                   id="hijab_preference"
                   name="hijab_preference"
-                  required
                   className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
                 >
                   <option value="">Select preference</option>
@@ -310,12 +299,11 @@ export default function ProfileSetupPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <Field>
-                  <FieldLabel htmlFor="age_min">Min Age *</FieldLabel>
+                  <FieldLabel htmlFor="age_min">Min Age</FieldLabel>
                   <Input
                     id="age_min"
                     name="age_min"
                     type="number"
-                    required
                     min="18"
                     max="100"
                     placeholder="25"
@@ -323,12 +311,11 @@ export default function ProfileSetupPage() {
                 </Field>
 
                 <Field>
-                  <FieldLabel htmlFor="age_max">Max Age *</FieldLabel>
+                  <FieldLabel htmlFor="age_max">Max Age</FieldLabel>
                   <Input
                     id="age_max"
                     name="age_max"
                     type="number"
-                    required
                     min="18"
                     max="100"
                     placeholder="35"
@@ -338,13 +325,12 @@ export default function ProfileSetupPage() {
 
               <Field>
                 <FieldLabel htmlFor="location_preference">
-                  Location Preference *
+                  Location Preference
                 </FieldLabel>
                 <Input
                   id="location_preference"
                   name="location_preference"
                   type="text"
-                  required
                   placeholder="New York, London, etc."
                 />
               </Field>
