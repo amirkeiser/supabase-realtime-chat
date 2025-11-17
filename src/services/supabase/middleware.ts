@@ -62,6 +62,36 @@ export async function updateSession(request: NextRequest) {
     const currentPath = request.nextUrl.pathname
     const isProfileRoute = currentPath.startsWith('/profile')
 
+    // Redirect authenticated users away from auth routes
+    if (isAuthRoute) {
+      const url = request.nextUrl.clone()
+      
+      // Redirect based on role and status
+      if (userRole === 'admin') {
+        url.pathname = '/admin'
+        return NextResponse.redirect(url)
+      }
+      
+      switch (profileStatus) {
+        case 'incomplete':
+          url.pathname = '/profile/setup'
+          break
+        case 'pending_review':
+          url.pathname = '/profile/pending'
+          break
+        case 'rejected':
+          url.pathname = '/profile/rejected'
+          break
+        case 'approved':
+          url.pathname = '/'
+          break
+        default:
+          url.pathname = '/'
+      }
+      
+      return NextResponse.redirect(url)
+    }
+
     // Admin bypass - can access everything
     if (userRole === 'admin') {
       if (currentPath === '/') {
@@ -82,7 +112,7 @@ export async function updateSession(request: NextRequest) {
     // Enforce profile status flow for regular users
     switch (profileStatus) {
       case 'incomplete':
-        if (currentPath !== '/profile/setup' && !isAuthRoute) {
+        if (currentPath !== '/profile/setup') {
           const url = request.nextUrl.clone()
           url.pathname = '/profile/setup'
           return NextResponse.redirect(url)
@@ -90,7 +120,7 @@ export async function updateSession(request: NextRequest) {
         break
 
       case 'pending_review':
-        if (currentPath !== '/profile/pending' && !isAuthRoute) {
+        if (currentPath !== '/profile/pending') {
           const url = request.nextUrl.clone()
           url.pathname = '/profile/pending'
           return NextResponse.redirect(url)
@@ -99,7 +129,7 @@ export async function updateSession(request: NextRequest) {
 
       case 'rejected':
         // Allow access to both rejected page and setup page for editing
-        if (currentPath !== '/profile/rejected' && currentPath !== '/profile/setup' && !isAuthRoute) {
+        if (currentPath !== '/profile/rejected' && currentPath !== '/profile/setup') {
           const url = request.nextUrl.clone()
           url.pathname = '/profile/rejected'
           return NextResponse.redirect(url)
@@ -107,7 +137,12 @@ export async function updateSession(request: NextRequest) {
         break
 
       case 'approved':
-        // Can access main platform
+        // Prevent approved users from accessing profile status pages
+        if (isProfileRoute) {
+          const url = request.nextUrl.clone()
+          url.pathname = '/'
+          return NextResponse.redirect(url)
+        }
         break
     }
   }
