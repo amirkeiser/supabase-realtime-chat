@@ -1,13 +1,20 @@
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
+import AuthenticatedNavbar from "@/components/authenticated-navbar";
+
 export default function ProfileSetupLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  // Clean layout without sidebar for profile setup/status pages
   return (
-    <div className="min-h-screen bg-background">
-      {children}
-    </div>
+    <SidebarProvider>
+      <SidebarInset>
+        <AuthenticatedNavbar />
+        <div className="min-h-screen bg-background">
+          {children}
+        </div>
+      </SidebarInset>
+    </SidebarProvider>
   );
 }
 

@@ -5,20 +5,31 @@ import { LogoutButton } from "@/services/supabase/components/logout-button";
 import { useSidebar } from "./ui/sidebar";
 import { Separator } from "./ui/separator";
 import { PanelLeft } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 export default function AuthenticatedNavbar() {
   const { user } = useCurrentUser();
   const { toggleSidebar } = useSidebar();
+  const pathname = usePathname();
+  
+  // Hide sidebar toggle on profile setup pages
+  const isProfileSetupPage = pathname?.startsWith("/setup") || 
+                             pathname?.startsWith("/pending") || 
+                             pathname?.startsWith("/rejected");
 
   return (
     <header className="sticky top-0 z-50 flex h-16 shrink-0 items-center border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <button
-        onClick={toggleSidebar}
-        className="flex items-center justify-center h-full px-4 hover:bg-accent transition-colors"
-      >
-        <PanelLeft className="size-5" />
-      </button>
-      <Separator orientation="vertical" className="h-4" />
+      {!isProfileSetupPage && (
+        <>
+          <button
+            onClick={toggleSidebar}
+            className="flex items-center justify-center h-full px-4 hover:bg-accent transition-colors"
+          >
+            <PanelLeft className="size-5" />
+          </button>
+          <Separator orientation="vertical" className="h-4" />
+        </>
+      )}
       
       <div className="flex items-center justify-end flex-1 gap-4 px-4">
         <span className="text-sm text-muted-foreground">

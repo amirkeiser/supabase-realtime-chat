@@ -22,7 +22,7 @@ export default async function ProfilePendingPage() {
     <div className="flex items-center justify-center py-8 px-4">
       <ProfileStatusMonitor userId={profile.id} />
       <div className="w-full max-w-2xl">
-        <Card className="p-8 text-center space-y-4">
+        <Card className="p-8 text-center space-y-4 border-0 shadow-none">
         <div className="mx-auto w-16 h-16 bg-yellow-100 dark:bg-yellow-900/20 rounded-full flex items-center justify-center">
           <svg
             xmlns="http://www.w3.org/2000/svg"

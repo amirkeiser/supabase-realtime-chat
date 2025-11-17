@@ -21,7 +21,7 @@ export default async function ProfileRejectedPage() {
   return (
     <div className="flex items-center justify-center py-8 px-4">
       <div className="w-full max-w-2xl">
-        <Card className="p-8 space-y-4">
+        <Card className="p-8 space-y-4 border-0 shadow-none">
           <div className="mx-auto w-16 h-16 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -47,7 +47,7 @@ export default async function ProfileRejectedPage() {
           </div>
 
           {profile.rejection_reason && (
-            <Card className="p-4 bg-muted">
+            <Card className="p-4 bg-muted border-0 shadow-none">
               <h2 className="font-semibold mb-2">Reason:</h2>
               <p className="text-sm">{profile.rejection_reason}</p>
             </Card>

@@ -124,16 +124,8 @@ export default function ProfileSetupPage() {
       date_of_birth: formData.get("date_of_birth") as string,
       gender: formData.get("gender") as "male" | "female",
       location: formData.get("location") as string,
-      religious_info: {
-        prayer_frequency: formData.get("prayer_frequency") as string,
-        sect: formData.get("sect") as string,
-        hijab_preference: formData.get("hijab_preference") as string,
-      },
-      preferences: {
-        age_min: Number(formData.get("age_min")),
-        age_max: Number(formData.get("age_max")),
-        location_preference: formData.get("location_preference") as string,
-      },
+      religious_info: {},
+      preferences: {},
     };
 
     const result = await submitProfile(data);
@@ -157,7 +149,7 @@ export default function ProfileSetupPage() {
           </p>
         </div>
 
-        <Card className="p-6">
+        <Card className="p-6 border-0 shadow-none">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Profile Photo Upload */}
             <Field>
@@ -200,13 +192,12 @@ export default function ProfileSetupPage() {
             <Field>
               <FieldLabel htmlFor="bio">Bio *</FieldLabel>
               <FieldDescription>
-                Tell us about yourself (minimum 50 characters)
+                Tell us about yourself
               </FieldDescription>
               <Textarea
                 id="bio"
                 name="bio"
                 required
-                minLength={50}
                 rows={4}
                 placeholder="Write a brief introduction about yourself..."
               />
@@ -250,103 +241,25 @@ export default function ProfileSetupPage() {
               />
             </Field>
 
-            {/* Religious Questions */}
+            {/* Religious Information - Placeholder */}
             <div className="space-y-4 border-t pt-6">
               <h2 className="text-lg font-semibold">Religious Information</h2>
 
               <Field>
-                <FieldLabel htmlFor="prayer_frequency">
-                  Prayer Frequency *
-                </FieldLabel>
-                <select
-                  id="prayer_frequency"
-                  name="prayer_frequency"
-                  required
-                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
-                >
-                  <option value="">Select frequency</option>
-                  <option value="5_times_daily">5 times daily</option>
-                  <option value="sometimes">Sometimes</option>
-                  <option value="rarely">Rarely</option>
-                </select>
-              </Field>
-
-              <Field>
-                <FieldLabel htmlFor="sect">Sect *</FieldLabel>
-                <select
-                  id="sect"
-                  name="sect"
-                  required
-                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
-                >
-                  <option value="">Select sect</option>
-                  <option value="twelver">Twelver</option>
-                  <option value="ismaili">Ismaili</option>
-                  <option value="other">Other</option>
-                </select>
-              </Field>
-
-              <Field>
-                <FieldLabel htmlFor="hijab_preference">
-                  Hijab Preference *
-                </FieldLabel>
-                <select
-                  id="hijab_preference"
-                  name="hijab_preference"
-                  required
-                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
-                >
-                  <option value="">Select preference</option>
-                  <option value="yes">Yes</option>
-                  <option value="no">No</option>
-                  <option value="sometimes">Sometimes</option>
-                </select>
+                <FieldDescription>
+                  This is where we can potentially ask religious info, if we choose to.
+                </FieldDescription>
               </Field>
             </div>
 
-            {/* Matchmaking Preferences */}
+            {/* Matchmaking Preferences - Placeholder */}
             <div className="space-y-4 border-t pt-6">
               <h2 className="text-lg font-semibold">Matchmaking Preferences</h2>
 
-              <div className="grid grid-cols-2 gap-4">
-                <Field>
-                  <FieldLabel htmlFor="age_min">Min Age *</FieldLabel>
-                  <Input
-                    id="age_min"
-                    name="age_min"
-                    type="number"
-                    required
-                    min="18"
-                    max="100"
-                    placeholder="25"
-                  />
-                </Field>
-
-                <Field>
-                  <FieldLabel htmlFor="age_max">Max Age *</FieldLabel>
-                  <Input
-                    id="age_max"
-                    name="age_max"
-                    type="number"
-                    required
-                    min="18"
-                    max="100"
-                    placeholder="35"
-                  />
-                </Field>
-              </div>
-
               <Field>
-                <FieldLabel htmlFor="location_preference">
-                  Location Preference *
-                </FieldLabel>
-                <Input
-                  id="location_preference"
-                  name="location_preference"
-                  type="text"
-                  required
-                  placeholder="New York, London, etc."
-                />
+                <FieldDescription>
+                  This is where we can potentially ask matchmaking preferences, if we choose to.
+                </FieldDescription>
               </Field>
             </div>
 
