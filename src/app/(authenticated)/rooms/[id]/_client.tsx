@@ -2,7 +2,6 @@
 
 import { ChatInput } from "@/components/chat-input"
 import { ChatMessage } from "@/components/chat-message"
-import { InviteUserModal } from "@/components/invite-user-modal"
 import { Button } from "@/components/ui/button"
 import { Message } from "@/services/supabase/actions/messages"
 import { createClient } from "@/services/supabase/client"
@@ -49,14 +48,13 @@ export function RoomClient({
 
   return (
     <div className="container mx-auto h-screen-with-header border border-y-0 flex flex-col">
-      <div className="flex items-center justify-between gap-2 p-4">
-        <div className="border-b">
+      <div className="flex items-center gap-2 p-4 border-b">
+        <div>
           <h1 className="text-2xl font-bold">{room.name}</h1>
           <p className="text-muted-foreground text-sm">
             {connectedUsers} {connectedUsers === 1 ? "user" : "users"} online
           </p>
         </div>
-        <InviteUserModal roomId={room.id} />
       </div>
       <div
         className="grow overflow-y-auto flex flex-col-reverse"
