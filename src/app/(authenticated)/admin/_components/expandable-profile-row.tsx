@@ -14,8 +14,8 @@ type ProfileData = {
   location: string | null
   date_of_birth: string | null
   bio: string | null
-  religious_info: Record<string, unknown> | null
-  preferences: Record<string, unknown> | null
+  religious_info: any
+  preferences: any
   submitted_at: string | null
 }
 
