@@ -200,11 +200,7 @@ export default function ProfileSetupPage() {
             {/* Date of Birth */}
             <Field>
               <FieldLabel htmlFor="date_of_birth">Date of Birth</FieldLabel>
-              <Input
-                id="date_of_birth"
-                name="date_of_birth"
-                type="date"
-              />
+              <Input id="date_of_birth" name="date_of_birth" type="date" />
             </Field>
 
             {/* Gender */}

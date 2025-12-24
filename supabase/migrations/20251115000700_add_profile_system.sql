@@ -77,6 +77,7 @@ $$;
 -- Update RLS policies for profile updates
 -- Drop old restrictive policy and recreate with simpler logic
 DROP POLICY IF EXISTS "Users can update own profile except role" ON user_profile;
+DROP POLICY IF EXISTS "Users can update own profile" ON user_profile;
 DROP POLICY IF EXISTS "Admins can update any profile" ON user_profile;
 
 -- Users can update their own profile (including when approved)
