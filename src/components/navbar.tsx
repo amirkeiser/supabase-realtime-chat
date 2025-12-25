@@ -14,15 +14,14 @@ export default function Navbar() {
   return (
     <div className="border-b bg-background h-header">
       <nav className="container mx-auto px-4 flex justify-between items-center h-full gap-4">
-        <Link href="/" className="flex items-center gap-2 text-xl font-bold">
+        <Link href="/" className="flex items-center">
           <Image
-            src="/sword-rose.svg"
+            src="/logo/v1.png"
             alt="Maknoon logo"
-            width={24}
-            height={24}
-            className="w-6 h-6 invert dark:invert-0"
+            width={200}
+            height={64}
+            className="h-16 w-auto"
           />
-          Maknoon
         </Link>
 
         {isLoading || user == null ? (

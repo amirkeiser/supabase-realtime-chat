@@ -64,16 +64,15 @@ export function AppSidebar() {
       <SidebarHeader className="h-16 border-b flex items-center p-0">
         <Link
           href="/"
-          className="flex items-center gap-2 px-4 text-xl font-bold group-data-[collapsible=icon]:justify-center w-full h-full"
+          className="flex items-center px-4 w-full h-full"
         >
           <Image
-            src="/sword-rose.svg"
+            src="/logo/v1.png"
             alt="Maknoon logo"
-            width={24}
-            height={24}
-            className="w-6 h-6 invert dark:invert-0 shrink-0"
+            width={200}
+            height={64}
+            className="h-16 w-auto"
           />
-          <span className="group-data-[collapsible=icon]:hidden">Maknoon</span>
         </Link>
       </SidebarHeader>
       <SidebarContent>
